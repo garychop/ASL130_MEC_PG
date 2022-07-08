@@ -39,6 +39,11 @@ void BluetoothControlInit(void)
     LATCbits.LATC2 = GPIO_HIGH;      
     LATCbits.LATC1 = GPIO_HIGH;      
     LATAbits.LATA5 = GPIO_HIGH;      
+//    PORTEbits.RE1 = GPIO_HIGH;      
+//    PORTDbits.RD3 = GPIO_HIGH;      
+//    PORTCbits.RC2 = GPIO_HIGH;      
+//    PORTCbits.RC1 = GPIO_HIGH;      
+//    PORTAbits.RA5 = GPIO_HIGH;      
 }
 
 //-------------------------------------------------------------------------
@@ -49,15 +54,23 @@ void SendBlueToothSignal (bool active, BT_DIRECTIONS whichOne)
     {
         case FWD_BT:
             LATDbits.LATD3 = active;
+//            PORTDbits.RD3 = active;
             break;
         case REV_BT:
             LATCbits.LATC2 = active;
+//            PORTCbits.RC2 = active;
             break;
         case LEFT_BT:
             LATEbits.LATE1 = active;
+//            PORTEbits.RE1 = active;
             break;
         case RIGHT_BT:
             LATCbits.LATC1 = active;
+//            PORTCbits.RC1 = active;
+            break;
+        case RIGHT_CLICK_OUT:
+            LATAbits.LATA5 = active;
+//            PORTAbits.RA5 = active;
             break;
         default:
             break;
@@ -90,10 +103,15 @@ void wait50msec (void)
 
 void SetOutputs (bool value)
 {
-    LATEbits.LATE1 = value;      
-    LATDbits.LATD3 = value;      
-    LATCbits.LATC2 = value;      
-    LATCbits.LATC1 = value;      
+    LATEbits.LATE1 = value;
+//    PORTEbits.RE1 = value;
+    LATDbits.LATD3 = value;
+//    PORTDbits.RD3 = value;
+    LATCbits.LATC2 = value;
+//    PORTCbits.RC2 = value;
+    LATCbits.LATC1 = value;
+//    PORTCbits.RC1 = value;
+    
 }
 //-------------------------------------------------------------------------
 void EnableBluetooth (void)

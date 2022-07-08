@@ -16,7 +16,8 @@
 void DigitalOutputInit(void)
 {
     TRISEbits.TRISE0 = GPIO_BIT_OUTPUT;
-    LATEbits.LATE0 = GPIO_LOW;
+    //LATEbits.LATE0 = GPIO_LOW;
+    PORTEbits.RE0 = GPIO_HIGH;
 
 #ifndef DEBUG    
     // This is shared with some debugging pin
@@ -29,7 +30,8 @@ void DigitalOutputInit(void)
 
 void SetResetOutput (bool state)
 {
-    LATEbits.LATE0 = state;
+    //LATEbits.LATE0 = state;
+    PORTEbits.RE0 = state;
 }
 
 //------------------------------------------------------------------------------

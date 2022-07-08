@@ -9,7 +9,7 @@
 
 // NOTE: This must ALWAYS be the first include in a file.
 #include "device_xc8.h"
-#include <xc.h>
+//#include <xc.h>
 
 // from stdlib
 #include <stdint.h>
@@ -30,13 +30,29 @@
 
 
 /* ******************************   Macros   ****************************** */
+//#define USING_LINX_IN500 (1) // Use Project Directives to define Neutral Window.
 
+#ifdef USING_TPI_PCB
 #define NEUTRAL_DEMAND_OUTPUT (1115)    // "1115" sets output voltage to 1.62 which
                                         // .. is Neutral Demand for LiNX TPI
                                         // 1115D = 0x45b
 #define MAX_DAC_OUTPUT (1700)           // 2.54 Volts * 0.00146 volts / bit
 #define MIN_DAC_OUTPUT (520)            // 0.76 Volts * 0.00146 volts / bit
-
+#elif BUILD_FOR_LiNX_IN500
+#define NEUTRAL_DEMAND_OUTPUT (2010)    // Sets output voltage to 6 volts which
+                                        // .. is Neutral Demand for LiNX IN500
+#define DAC_SWING (410)
+#define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)           // 7.2 Volts * 0.00146 volts / bit
+#define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)           // 4.8 Volts * 0.00146 volts / bit
+#elif BUILD_FOR_RNET
+#define NEUTRAL_DEMAND_OUTPUT (1929)    // Sets output voltage to 5.75 volts which
+                                        // .. is Neutral Demand for RNet System
+#define DAC_SWING (369)                 // Switch is 1.1 Volts.
+#define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+#define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+#else
+#assert
+#endif
 
 enum STATE_ENUM {
     NO_STATE = 0,
@@ -96,7 +112,7 @@ int main (void)
     int i;
     bool eepromStatus;
     
-	UTRDIS = 1; 						//	USB transceiver disable 
+	//UTRDIS = 1; 						//	USB transceiver disable 
     bspInitCore();
     beeperInit();
     DigitalOutputInit();
@@ -189,7 +205,7 @@ int main (void)
             default:
                 break;
         }
-        bspDelayUs (US_DELAY_200_us);
+        bspDelayUs (US_DELAY_100_us);
     }
 }
 
@@ -209,7 +225,6 @@ static void AnnunceEnterDriverState (void)
 // This function waits for the Joystick to be in neutral and no buttons are
 // active.
 //------------------------------------------------------------------------------
-
 static void EnterDrivingState (void)
 {
     if (IsJoystickInNeutral())
@@ -237,87 +252,85 @@ static void DrivingState (void)
     uint16_t rawSpeed, rawDirection;
     float offset, demand;
     uint16_t int_SpeedDemand, int_DirectionDemand; 
-    
-    GetSpeedAndDirection (&rawSpeed, &rawDirection);
+    bool stillDriving = true;
     
     int_SpeedDemand = NEUTRAL_DEMAND_OUTPUT;
     int_DirectionDemand = NEUTRAL_DEMAND_OUTPUT;
-    
-    // Process the Joystick Speed signal
-    if (rawSpeed > Joystick_Data[SPEED_ARRAY].m_rawMaxNuetral)
-    {
-        if (rawSpeed > (Joystick_Data[SPEED_ARRAY].m_PositiveScale + Joystick_Data[SPEED_ARRAY].m_rawNeutral))
-            rawSpeed = Joystick_Data[SPEED_ARRAY].m_PositiveScale + Joystick_Data[SPEED_ARRAY].m_rawNeutral;
-        demand = (float) NEUTRAL_DEMAND_OUTPUT; 
-        offset = rawSpeed - Joystick_Data[SPEED_ARRAY].m_rawNeutral;
-        offset = (offset / (float)Joystick_Data[SPEED_ARRAY].m_PositiveScale) * 630.0f;
-        demand += offset;
-        int_SpeedDemand = (uint16_t) demand;
-    }
-    else if (rawSpeed < Joystick_Data[SPEED_ARRAY].m_rawMinNeutral)
-    {
-        if (IsSW2_1_Closed() == false)  // Are we using Reverse as a Mode Switch? NO!
-        {
-            if (rawSpeed < (Joystick_Data[SPEED_ARRAY].m_rawNeutral - Joystick_Data[SPEED_ARRAY].m_NegativeScale))
-                rawSpeed = Joystick_Data[SPEED_ARRAY].m_rawNeutral - Joystick_Data[SPEED_ARRAY].m_NegativeScale;
-            demand = (float) NEUTRAL_DEMAND_OUTPUT; 
-            offset = Joystick_Data[SPEED_ARRAY].m_rawNeutral - rawSpeed;
-            offset = (offset / (float) Joystick_Data[SPEED_ARRAY].m_NegativeScale) * 630.0f;
-            demand -= offset;
-            int_SpeedDemand = (uint16_t) demand;
-        }
-    }
-    // Process the Joystick Directional signal
-    if (rawDirection > Joystick_Data[DIRECTION_ARRAY].m_rawMaxNuetral)
-    {
-        // Check to see if the joystick is past the calibrated value.
-        if (rawDirection > (Joystick_Data[DIRECTION_ARRAY].m_PositiveScale + Joystick_Data[DIRECTION_ARRAY].m_rawNeutral))
-            rawDirection = Joystick_Data[DIRECTION_ARRAY].m_PositiveScale + Joystick_Data[DIRECTION_ARRAY].m_rawNeutral;
-        demand = (float) NEUTRAL_DEMAND_OUTPUT; 
-        offset = rawDirection - Joystick_Data[DIRECTION_ARRAY].m_rawNeutral;
-        offset = (offset / (float)Joystick_Data[DIRECTION_ARRAY].m_PositiveScale) * 630.0f;
-        demand += offset;
-        int_DirectionDemand = (uint16_t) demand;
-    }
-    else if (rawDirection < Joystick_Data[DIRECTION_ARRAY].m_rawMinNeutral)
-    {
-        // Check to see if the joystick is past the calibrated value.
-        if (rawDirection < (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - Joystick_Data[DIRECTION_ARRAY].m_NegativeScale))
-            rawDirection = Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - Joystick_Data[DIRECTION_ARRAY].m_NegativeScale;
-        demand = (float) NEUTRAL_DEMAND_OUTPUT; 
-        offset = Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - rawDirection;
-        offset = (offset / (float)Joystick_Data[DIRECTION_ARRAY].m_NegativeScale) * 630.0f;
-        demand -= offset;
-        int_DirectionDemand = (uint16_t) demand;
-    }
     
     // Shall we do some calibration?
     if (IsCalibrationButtonActive())
     {
         gp_State = ENTER_CALIBRATION_STATE;
-        // Let's stop driving if we are.
-        int_SpeedDemand = NEUTRAL_DEMAND_OUTPUT;
-        int_DirectionDemand = NEUTRAL_DEMAND_OUTPUT;
+        stillDriving = false;   // Let's stop driving if we are.
     }
     
     // Shall we change to Bluetooth Mode?
     if (IsUserPortButtonActive())
     {
         gp_State = ANNOUNCE_ENTER_BLUETOOTH_STATE;
-        // Let's stop driving if we are.
-        int_SpeedDemand = NEUTRAL_DEMAND_OUTPUT;
-        int_DirectionDemand = NEUTRAL_DEMAND_OUTPUT;
+        stillDriving = false;   // Let's stop driving if we are.
     }
     
     // Shall we change Modes
     if (IsModeButtonActive())
     {
         gp_State = ENTER_MODE_CHANGE_STATE;
-        // Let's stop driving if we are.
-        int_SpeedDemand = NEUTRAL_DEMAND_OUTPUT;
-        int_DirectionDemand = NEUTRAL_DEMAND_OUTPUT;
+        stillDriving = false;   // Let's stop driving if we are.
     }
 
+    if (stillDriving)
+    {
+        GetSpeedAndDirection (&rawSpeed, &rawDirection);
+
+        // Process the Joystick Speed signal
+        if (rawSpeed > Joystick_Data[SPEED_ARRAY].m_rawMaxNuetral)
+        {
+            if (rawSpeed > (Joystick_Data[SPEED_ARRAY].m_PositiveScale + Joystick_Data[SPEED_ARRAY].m_rawNeutral))
+                rawSpeed = Joystick_Data[SPEED_ARRAY].m_PositiveScale + Joystick_Data[SPEED_ARRAY].m_rawNeutral;
+            demand = (float) NEUTRAL_DEMAND_OUTPUT; 
+            offset = rawSpeed - Joystick_Data[SPEED_ARRAY].m_rawNeutral;
+            offset = (offset / (float)Joystick_Data[SPEED_ARRAY].m_PositiveScale) * 630.0f;
+            demand += offset;
+            int_SpeedDemand = (uint16_t) demand;
+        }
+        else if (rawSpeed < Joystick_Data[SPEED_ARRAY].m_rawMinNeutral)
+        {
+            if (IsSW2_1_Closed() == false)  // Are we using Reverse as a Mode Switch? NO!
+            {
+                if (rawSpeed < (Joystick_Data[SPEED_ARRAY].m_rawNeutral - Joystick_Data[SPEED_ARRAY].m_NegativeScale))
+                    rawSpeed = Joystick_Data[SPEED_ARRAY].m_rawNeutral - Joystick_Data[SPEED_ARRAY].m_NegativeScale;
+                demand = (float) NEUTRAL_DEMAND_OUTPUT; 
+                offset = Joystick_Data[SPEED_ARRAY].m_rawNeutral - rawSpeed;
+                offset = (offset / (float) Joystick_Data[SPEED_ARRAY].m_NegativeScale) * 630.0f;
+                demand -= offset;
+                int_SpeedDemand = (uint16_t) demand;
+            }
+        }
+        // Process the Joystick Directional signal
+        if (rawDirection > Joystick_Data[DIRECTION_ARRAY].m_rawMaxNuetral)
+        {
+            // Check to see if the joystick is past the calibrated value.
+            if (rawDirection > (Joystick_Data[DIRECTION_ARRAY].m_PositiveScale + Joystick_Data[DIRECTION_ARRAY].m_rawNeutral))
+                rawDirection = Joystick_Data[DIRECTION_ARRAY].m_PositiveScale + Joystick_Data[DIRECTION_ARRAY].m_rawNeutral;
+            demand = (float) NEUTRAL_DEMAND_OUTPUT; 
+            offset = rawDirection - Joystick_Data[DIRECTION_ARRAY].m_rawNeutral;
+            offset = (offset / (float)Joystick_Data[DIRECTION_ARRAY].m_PositiveScale) * 630.0f;
+            demand += offset;
+            int_DirectionDemand = (uint16_t) demand;
+        }
+        else if (rawDirection < Joystick_Data[DIRECTION_ARRAY].m_rawMinNeutral)
+        {
+            // Check to see if the joystick is past the calibrated value.
+            if (rawDirection < (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - Joystick_Data[DIRECTION_ARRAY].m_NegativeScale))
+                rawDirection = Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - Joystick_Data[DIRECTION_ARRAY].m_NegativeScale;
+            demand = (float) NEUTRAL_DEMAND_OUTPUT; 
+            offset = Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - rawDirection;
+            offset = (offset / (float)Joystick_Data[DIRECTION_ARRAY].m_NegativeScale) * 630.0f;
+            demand -= offset;
+            int_DirectionDemand = (uint16_t) demand;
+        }
+    }
+    
     // Send joystick demands to the TPI board.
     SetTPI_Demands (int_SpeedDemand, int_DirectionDemand);
 }
@@ -365,57 +378,47 @@ static void BluetoothControlState (void)
         SetLeftClickOutput (GPIO_HIGH);
     }
     
-//    if (IsJoystickInNeutral())
-//    {
-//        SendBlueToothSignal (GPIO_HIGH, FWD_BT);
-//        SendBlueToothSignal (GPIO_HIGH, REV_BT);
-//        SendBlueToothSignal (GPIO_HIGH, LEFT_BT);
-//        SendBlueToothSignal (GPIO_HIGH, RIGHT_BT);
-//    }
-//    else
-//    {
-        // Determine which joystick direction is active and send signal
-        // to Bluetooth module.
-        GetSpeedAndDirection (&rawSpeed, &rawDirection);
+    // Determine which joystick direction is active and send signal
+    // to Bluetooth module.
+    GetSpeedAndDirection (&rawSpeed, &rawDirection);
+
+    // Process SPEED demand
+    if (rawSpeed > (Joystick_Data[SPEED_ARRAY].m_rawNeutral + (Joystick_Data[SPEED_ARRAY].m_PositiveScale / 2)))
+    {
+        SendBlueToothSignal (GPIO_LOW, FWD_BT); // Forward is active
+    }
+    else
+    {
+        SendBlueToothSignal (GPIO_HIGH, FWD_BT);    // Forward is NOT active
+    }
+
+    if (rawSpeed < (Joystick_Data[SPEED_ARRAY].m_rawNeutral - (Joystick_Data[SPEED_ARRAY].m_NegativeScale / 2)))
+    {
+        SendBlueToothSignal (GPIO_LOW, REV_BT); // Reverse is active
+    }
+    else
+    {
+        SendBlueToothSignal (GPIO_HIGH, REV_BT);    // Reverse is not active
+    }
         
-        // Process SPEED demand
-        if (rawSpeed > (Joystick_Data[SPEED_ARRAY].m_rawNeutral + (Joystick_Data[SPEED_ARRAY].m_PositiveScale / 2)))
-        {
-            SendBlueToothSignal (GPIO_LOW, FWD_BT); // Forward is active
-        }
-        else
-        {
-            SendBlueToothSignal (GPIO_HIGH, FWD_BT);    // Forward is NOT active
-        }
+    // Process DIRECTION demand
+    if (rawDirection > (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral + (Joystick_Data[DIRECTION_ARRAY].m_PositiveScale / 2)))
+    {
+        SendBlueToothSignal (GPIO_LOW, RIGHT_BT);   // Right is active
+    }
+    else
+    {
+        SendBlueToothSignal (GPIO_HIGH, RIGHT_BT);  // Right is NOT active
+    }
         
-        if (rawSpeed < (Joystick_Data[SPEED_ARRAY].m_rawNeutral - (Joystick_Data[SPEED_ARRAY].m_NegativeScale / 2)))
-        {
-            SendBlueToothSignal (GPIO_LOW, REV_BT); // Reverse is active
-        }
-        else
-        {
-            SendBlueToothSignal (GPIO_HIGH, REV_BT);    // Reverse is not active
-        }
-        
-        // Process DIRECTION demand
-        if (rawDirection > (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral + (Joystick_Data[DIRECTION_ARRAY].m_PositiveScale / 2)))
-        {
-            SendBlueToothSignal (GPIO_LOW, RIGHT_BT);   // Right is active
-        }
-        else
-        {
-            SendBlueToothSignal (GPIO_HIGH, RIGHT_BT);  // Right is NOT active
-        }
-        
-        if (rawDirection < (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - (Joystick_Data[DIRECTION_ARRAY].m_NegativeScale / 2)))
-        {
-            SendBlueToothSignal (GPIO_LOW, LEFT_BT);    // Left is active
-        }
-        else
-        {
-            SendBlueToothSignal (GPIO_HIGH, LEFT_BT);    // Left is NOT active
-        }
-//    }
+    if (rawDirection < (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - (Joystick_Data[DIRECTION_ARRAY].m_NegativeScale / 2)))
+    {
+        SendBlueToothSignal (GPIO_LOW, LEFT_BT);    // Left is active
+    }
+    else
+    {
+        SendBlueToothSignal (GPIO_HIGH, LEFT_BT);    // Left is NOT active
+    }
 }
 
 //------------------------------------------------------------------------------

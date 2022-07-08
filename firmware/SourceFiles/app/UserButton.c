@@ -20,7 +20,9 @@
 // Macros and defines
 
 
-#define MAX_DEBOUNCE (8)
+#define MAX_DEBOUNCE (5) // (8)
+
+#define USE_JOYSTICK_MODE_SWITCH (1)
 
 #ifdef FUTURE_WORK
 typedef enum {
@@ -67,28 +69,45 @@ void UserButtonInit(void)
 {
     // Initialize the Calibration Button input
     TRISBbits.TRISB2 = GPIO_BIT_INPUT;
+    ANSELBbits.ANSELB2 = 0;         // Ensure it's a digital input.
+    WPUBbits.WPUB2 = 1;             // Enable weak pullup.
     g_CalButton_DebounceCounter = 0;
     g_CalButtonState = PORTBbits.RB2;
-    
+
+#ifdef USE_JOYSTICK_MODE_SWITCH    
     //Initialize the Mode Button on the Joystick
     TRISBbits.TRISB0 = GPIO_BIT_INPUT;
+    ANSELBbits.ANSELB0 = 0;         // Ensure the analog process does not interfere.
+    WPUBbits.WPUB0 = 1;             // Enable weak pullup.
     g_ModeButton_DebounceCounter = 0;
     g_ModeButton_State = PORTBbits.RB0;
+#endif
     
     // Initialize the SW2 DIP Switches, No need to debounce DIP switches
     TRISBbits.TRISB1 = GPIO_BIT_INPUT;  // SW2-1
+    ANSELBbits.ANSELB1 = 0;         // Ensure it's a digital input.
+    WPUBbits.WPUB1 = 1;             // Enable weak pullup.
+
     TRISBbits.TRISB5 = GPIO_BIT_INPUT;  // SW2-2
-    
+    ANSELBbits.ANSELB5 = 0;         // Ensure it's a digital input.
+    WPUBbits.WPUB5 = 1;             // Enable weak pullup.
+
 #ifndef DEBUG
     // Right Click input, shared with PGC
     TRISBbits.TRISB6 = GPIO_BIT_INPUT;
+    ANSELBbits.ANSELB6 = 0;         // Ensure it is setup for Digital
+    WPUBbits.WPUB6 = 1;             // Enable a weak pully-up
     g_MouseClick_DebounceCounter = 0;
     g_MouseClick_State = PORTBbits.RB6;
-    g_RightMouseClickEnabled = (PORTBbits.RB6 ? false : true);   // If high then RT MOUSE CLICKS are disabled.
+    g_RightMouseClickEnabled = (PORTBbits.RB6 ? true : false);   // If low then RT MOUSE CLICKS are disabled.
+                                    // .. because the input is held low via a single mono
+                                    // .. switch plugged into the Right/Left Mouse Click
     
     // Setup USER PORT as input.
     // Unfortunately, PIN RB6 is shared with PGD programming pin
     TRISBbits.TRISB7 = GPIO_BIT_INPUT;  // USER PORT
+    ANSELBbits.ANSELB7 = 0;         // Ensure it is setup for Digital
+    WPUBbits.WPUB7 = 1;             // Enable a weak pully-up.
     g_UserPort_State = PORTBbits.RB7;
     g_UserPort_DebounceCounter = 0;
 #else
@@ -102,11 +121,7 @@ void UserButtonInit(void)
 // Functions returns true if the Calibration Button is pressed.
 bool IsCalibrationButtonActive (void)
 {
-//#ifndef DEBUG
     return (g_CalButtonState ? false : true);   // Closed is active low.
-//#else
-//    return false;
-//#endif
 }
 
 //------------------------------------------------------------------------------
@@ -120,6 +135,7 @@ bool IsUserPortButtonActive (void)
 
 bool IsModeButtonActive (void)
 {
+#ifdef USE_JOYSTICK_MODE_SWITCH    
     uint16_t rawSpeed, rawDirection;
     uint16_t deflection;
     bool reverseIsActive;
@@ -146,6 +162,7 @@ bool IsModeButtonActive (void)
     }
     if (reverseIsActive)
         return true;
+#endif
     
     // Otherwise return the Joystick's Mode Button state.
     return (g_ModeButton_State ? false : true);     // Closed is active low
@@ -197,6 +214,8 @@ void Read_User_Buttons (void)
         }
     }
 
+#ifdef USE_JOYSTICK_MODE_SWITCH    
+    
     // Read and debounce the Mode Button on the Joystick.
     if (IsSW2_2_Closed() == false)  // Are we disabling the Joystick's Mode Switch
     {
@@ -208,7 +227,7 @@ void Read_User_Buttons (void)
         else
         {
             ++g_ModeButton_DebounceCounter;
-            if (g_ModeButton_DebounceCounter > MAX_DEBOUNCE)
+            if (g_ModeButton_DebounceCounter > 0) // MAX_DEBOUNCE)
             {
                 g_ModeButton_State = PORTBbits.RB0;
                 g_ModeButton_DebounceCounter = 0;
@@ -219,6 +238,9 @@ void Read_User_Buttons (void)
     {
         g_ModeButton_State = GPIO_HIGH; // Indicate OPEN, Not Active
     }
+#else
+    g_ModeButton_State = GPIO_HIGH;
+#endif
 #ifndef DEBUG
     // Process USER PORT switch input
     if (PORTBbits.RB7 == g_UserPort_State)

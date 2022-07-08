@@ -41,6 +41,7 @@ void beeperInit(void)
 void TurnBeeper (BEEP_CONTROL_ENUM onoff)
 {
     LATDbits.LATD0 = onoff;
+    //PORTDbits.RD0 = onoff;
 }
 // end of file.
 //-------------------------------------------------------------------------

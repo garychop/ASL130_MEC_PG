@@ -33,7 +33,7 @@
 #ifndef USER_BUTTON_H
 #define	USER_BUTTON_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+//#include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdint.h>
 #include <stdbool.h>
 

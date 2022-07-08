@@ -21,7 +21,7 @@
 
 typedef enum {
     NO_BT = 0,
-    FWD_BT, REV_BT, LEFT_BT, RIGHT_BT
+    FWD_BT, REV_BT, LEFT_BT, RIGHT_BT, RIGHT_CLICK_OUT
 } BT_DIRECTIONS;
 
 /* ***********************   Function Prototypes   ************************ */

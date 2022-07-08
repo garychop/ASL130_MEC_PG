@@ -31,7 +31,7 @@
 #ifndef ANALOG_INPUT_H
 #define	ANALOG_INPUT_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+//#include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdint.h>
 #include <stdbool.h>
 

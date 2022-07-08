@@ -10,7 +10,7 @@
 #ifndef DIGITAL_OUTPUT_H
 #define	DIGITAL_OUTPUT_H
 
-#include <xc.h> // include processor files - each processor file is guarded.  
+//#include <xc.h> // include processor files - each processor file is guarded.  
 #include <stdint.h>
 #include <stdbool.h>
 

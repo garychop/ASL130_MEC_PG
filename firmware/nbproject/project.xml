@@ -20,11 +20,15 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>default</name>
+                    <name>Release_LiNX</name>
                     <type>2</type>
                 </confElem>
                 <confElem>
-                    <name>Debug</name>
+                    <name>Debug_LiNX</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_RNet</name>
                     <type>2</type>
                 </confElem>
             </confList>

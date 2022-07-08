@@ -25,6 +25,7 @@
 // from local project
 #include "bsp.h"
 #include "dac_bsp.h"
+#include "common.h"
 
 /* ******************************   Macros   ****************************** */
 
