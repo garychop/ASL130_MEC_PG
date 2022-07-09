@@ -33,6 +33,7 @@
 void beeperInit(void)
 {
     TRISDbits.TRISD0 = GPIO_BIT_OUTPUT;
+    ANSELDbits.ANSELD0 = 0;     // Disable Analog feature to allow digital to operate correctly.
     //TurnBeeper(BEEPER_ON);
     TurnBeeper(BEEPER_OFF);
 }

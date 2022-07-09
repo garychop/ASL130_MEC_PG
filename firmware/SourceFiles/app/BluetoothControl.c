@@ -28,10 +28,15 @@
 void BluetoothControlInit(void)
 {
     TRISEbits.TRISE1 = GPIO_BIT_OUTPUT;    // D1
+    ANSELEbits.ANSELE1 = 0;
     TRISDbits.TRISD3 = GPIO_BIT_OUTPUT;    // D2
+    ANSELDbits.ANSELD3 = 0;
     TRISCbits.TRISC2 = GPIO_BIT_OUTPUT;    // D3
+    ANSELCbits.ANSELC2 = 0;
     TRISCbits.TRISC1 = GPIO_BIT_OUTPUT;    // D4
+    ANSELCbits.ANSELC1 = 0;
     TRISAbits.TRISA5 = GPIO_BIT_OUTPUT;    // R_CLK_OUT
+    ANSELAbits.ANSELA5 = 0;
 
     // Set all Bluetooth control lines high
     LATEbits.LATE1 = GPIO_HIGH;      
