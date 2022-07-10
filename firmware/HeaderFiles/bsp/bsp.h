@@ -30,6 +30,8 @@
 #define GPIO_BIT_INPUT 	(1)
 #define GPIO_BIT_OUTPUT (0)
 
+#define MAX_DEBOUNCE (5) // (8)
+
 //-----------------------
 // microsecond delay values
 // NOTE: When calling bspDelayUs, only use these values!

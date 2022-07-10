@@ -369,13 +369,13 @@ static void BluetoothControlState (void)
                                         // ... before allowing to drive
     }
     
-    if (IsMouseClickActive ())
+    if (IsMouseRightClickActive ())
     {
-        SetLeftClickOutput (GPIO_LOW);
+        SendBlueToothSignal (LEFT_CLICK_OUT, GPIO_LOW);
     }
     else
     {
-        SetLeftClickOutput (GPIO_HIGH);
+        SendBlueToothSignal (LEFT_CLICK_OUT, GPIO_HIGH);
     }
     
     // Determine which joystick direction is active and send signal
@@ -385,39 +385,39 @@ static void BluetoothControlState (void)
     // Process SPEED demand
     if (rawSpeed > (Joystick_Data[SPEED_ARRAY].m_rawNeutral + (Joystick_Data[SPEED_ARRAY].m_PositiveScale / 2)))
     {
-        SendBlueToothSignal (GPIO_LOW, FWD_BT); // Forward is active
+        SendBlueToothSignal (FWD_BT, GPIO_LOW); // Forward is active
     }
     else
     {
-        SendBlueToothSignal (GPIO_HIGH, FWD_BT);    // Forward is NOT active
+        SendBlueToothSignal (FWD_BT, GPIO_HIGH);    // Forward is NOT active
     }
 
     if (rawSpeed < (Joystick_Data[SPEED_ARRAY].m_rawNeutral - (Joystick_Data[SPEED_ARRAY].m_NegativeScale / 2)))
     {
-        SendBlueToothSignal (GPIO_LOW, REV_BT); // Reverse is active
+        SendBlueToothSignal (REV_BT, GPIO_LOW); // Reverse is active
     }
     else
     {
-        SendBlueToothSignal (GPIO_HIGH, REV_BT);    // Reverse is not active
+        SendBlueToothSignal (REV_BT, GPIO_HIGH);    // Reverse is not active
     }
         
     // Process DIRECTION demand
     if (rawDirection > (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral + (Joystick_Data[DIRECTION_ARRAY].m_PositiveScale / 2)))
     {
-        SendBlueToothSignal (GPIO_LOW, RIGHT_BT);   // Right is active
+        SendBlueToothSignal (RIGHT_BT, GPIO_LOW);   // Right is active
     }
     else
     {
-        SendBlueToothSignal (GPIO_HIGH, RIGHT_BT);  // Right is NOT active
+        SendBlueToothSignal (RIGHT_BT, GPIO_HIGH);  // Right is NOT active
     }
         
     if (rawDirection < (Joystick_Data[DIRECTION_ARRAY].m_rawNeutral - (Joystick_Data[DIRECTION_ARRAY].m_NegativeScale / 2)))
     {
-        SendBlueToothSignal (GPIO_LOW, LEFT_BT);    // Left is active
+        SendBlueToothSignal (LEFT_BT, GPIO_LOW);    // Left is active
     }
     else
     {
-        SendBlueToothSignal (GPIO_HIGH, LEFT_BT);    // Left is NOT active
+        SendBlueToothSignal (LEFT_BT, GPIO_HIGH);    // Left is NOT active
     }
 }
 
@@ -533,7 +533,6 @@ static void JoystickCalibrationState(void)
     
 }
 
-//------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
 static void ExitCalibrationState(void)

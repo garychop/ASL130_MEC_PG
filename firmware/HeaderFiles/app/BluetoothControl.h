@@ -21,7 +21,7 @@
 
 typedef enum {
     NO_BT = 0,
-    FWD_BT, REV_BT, LEFT_BT, RIGHT_BT, RIGHT_CLICK_OUT
+    FWD_BT, REV_BT, LEFT_BT, RIGHT_BT, RIGHT_CLICK_OUT, LEFT_CLICK_OUT
 } BT_DIRECTIONS;
 
 /* ***********************   Function Prototypes   ************************ */
@@ -29,7 +29,9 @@ typedef enum {
 void BluetoothControlInit(void);
 void EnableBluetooth (void);
 void DisableBluetooth (void);
-void SendBlueToothSignal (bool, BT_DIRECTIONS);
+void SendBlueToothSignal (BT_DIRECTIONS, bool);
+bool IsMouseRightClickActive (void);
+void GetMouseClickInputs(void);
 
 #endif // BLUETOOTH_CONTROL_H
 

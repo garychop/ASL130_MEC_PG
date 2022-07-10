@@ -20,6 +20,7 @@
 #include <stdbool.h>
 
 // from local
+#include "bsp.h"
 #include "beeper.h"
 
 /* ******************************   Types   ******************************* */
@@ -34,15 +35,13 @@ void beeperInit(void)
 {
     TRISDbits.TRISD0 = GPIO_BIT_OUTPUT;
     ANSELDbits.ANSELD0 = 0;     // Disable Analog feature to allow digital to operate correctly.
-    //TurnBeeper(BEEPER_ON);
-    TurnBeeper(BEEPER_OFF);
+    LATDbits.LATD0 = GPIO_HIGH;     // Turn the beeper off.
 }
 
 //-------------------------------------------------------------------------
 void TurnBeeper (BEEP_CONTROL_ENUM onoff)
 {
     LATDbits.LATD0 = onoff;
-    //PORTDbits.RD0 = onoff;
 }
 // end of file.
 //-------------------------------------------------------------------------
