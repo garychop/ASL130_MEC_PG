@@ -151,7 +151,6 @@ void wait50msec (void)
 {
     uint8_t i;
     
-    // 10 milliseconds, actually 9.74 * 5 msecs
     for (i = 0; i < 100; ++i)
         bspDelayUs (US_DELAY_500_us);
 }

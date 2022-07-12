@@ -45,9 +45,12 @@
 #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)           // 7.2 Volts * 0.00146 volts / bit
 #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)           // 4.8 Volts * 0.00146 volts / bit
 #elif BUILD_FOR_RNET
-#define NEUTRAL_DEMAND_OUTPUT (1929)    // Sets output voltage to 5.75 volts which
+#define NEUTRAL_DEMAND_OUTPUT (1929 + 73)    // Sets output voltage to 5.75 volts which
                                         // .. is Neutral Demand for RNet System
-#define DAC_SWING (369)                 // Switch is 1.1 Volts.
+                                        // However, the RNet system voltage is lowere
+                                        // .. than the LiNX so an adjustment has
+                                        // .. be introduced for this additional offset.
+#define DAC_SWING (344)                 // Switch is 1.0 Volts.
 #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
 #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
 #else

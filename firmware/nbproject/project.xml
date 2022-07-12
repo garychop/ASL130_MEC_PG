@@ -20,11 +20,11 @@
             </sourceRootList>
             <confList>
                 <confElem>
-                    <name>Release_LiNX</name>
+                    <name>Debug_LiNX</name>
                     <type>2</type>
                 </confElem>
                 <confElem>
-                    <name>Debug_LiNX</name>
+                    <name>Release_LiNX</name>
                     <type>2</type>
                 </confElem>
                 <confElem>

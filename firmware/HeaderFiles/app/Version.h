@@ -23,7 +23,7 @@
 
 #define MAJOR_VERSION (2)
 #define MINOR_VERSION (4)
-#define BUILD_VERSION (0)
+#define BUILD_VERSION (1)
 
 /* ***********************   Function Prototypes   ************************ */
 
