@@ -53,7 +53,15 @@ typedef struct
 extern JOYSTICK_STRUCT Joystick_Data[NUM_JS_POTS];
 
 #define NEUTRAL_JOYSTICK_INPUT (0x202)
+
+#ifdef BUILD_FOR_ASL133_ASL134
+// The ASL133 and ASL134 joysticks require a much smaller Neutral Area than
+// ... ASL128, ASL130 and ASL138 joysticks.
+#define NEUTRAL_ERROR_MARGIN (0x18)     // The amount of deviation from the Neutral
+#else
 #define NEUTRAL_ERROR_MARGIN (0x40)     // The amount of deviation from the Neutral
+#endif
+
 #define JOYSTICK_RAW_MAX_DEFLECTION (220)   // This is the max that the joystick 
                                         // .. input can deviate from neutral.
 

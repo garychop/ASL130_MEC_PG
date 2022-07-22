@@ -31,6 +31,14 @@
                     <name>Release_RNet</name>
                     <type>2</type>
                 </confElem>
+                <confElem>
+                    <name>ASL133_ASL134_Release_RNet</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic</name>
+                    <type>2</type>
+                </confElem>
             </confList>
             <formatting>
                 <project-formatting-style>false</project-formatting-style>
