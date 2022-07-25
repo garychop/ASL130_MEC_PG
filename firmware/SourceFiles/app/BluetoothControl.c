@@ -40,19 +40,14 @@ void BluetoothControlInit(void)
 {
     TRISEbits.TRISE1 = GPIO_BIT_OUTPUT;    // D1
     ANSELEbits.ANSELE1 = 0;
-    WPUEbits.WPUE1 = 1;                     // Enable weak pullup
     TRISDbits.TRISD3 = GPIO_BIT_OUTPUT;    // D2
     ANSELDbits.ANSELD3 = 0;
-    WPUDbits.WPUD3 = 1;                     // Enable weak pullup
     TRISCbits.TRISC2 = GPIO_BIT_OUTPUT;    // D3
     ANSELCbits.ANSELC2 = 0;
-    WPUCbits.WPUC2 = 1;                     // Enable weak pullup
     TRISCbits.TRISC1 = GPIO_BIT_OUTPUT;    // D4
     ANSELCbits.ANSELC1 = 0;
-    WPUCbits.WPUC1 = 1;                     // Enable weak pullup
     TRISAbits.TRISA5 = GPIO_BIT_OUTPUT;    // LEFT_CLK_OUT
     ANSELAbits.ANSELA5 = 0;
-    WPUAbits.WPUA5 = 1;                     // Enable weak pullup
 
     // Set all Bluetooth control lines high
     LATEbits.LATE1 = GPIO_HIGH;      
