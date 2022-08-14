@@ -54,11 +54,59 @@
 #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
 #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
 #elif BUILD_FOR_QLOGIC
-#define NEUTRAL_DEMAND_OUTPUT (1929 + 73 + 34)    // Sets output voltage to 5.95 volts which
-                                        // .. is Neutral Demand for Qlogic System
-#define DAC_SWING (344)                 // Switch is 1.0 Volts.
-#define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
-#define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #ifdef BUILD_1984
+    #define NEUTRAL_DEMAND_OUTPUT (1984)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_1990
+    #define NEUTRAL_DEMAND_OUTPUT (1990)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_1992
+    #define NEUTRAL_DEMAND_OUTPUT (1992)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_1995
+    #define NEUTRAL_DEMAND_OUTPUT (1995)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_2000
+    #define NEUTRAL_DEMAND_OUTPUT (2000)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_2010
+    #define NEUTRAL_DEMAND_OUTPUT (2010)
+    //#define NEUTRAL_DEMAND_OUTPUT (1929 + 73 + 34)    // This is 5.89 which is too high.
+                                            // .. is Neutral Demand for Qlogic System
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_2018
+    #define NEUTRAL_DEMAND_OUTPUT (2018)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_2024
+    #define NEUTRAL_DEMAND_OUTPUT (2024)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #elif BUILD_2030
+    #define NEUTRAL_DEMAND_OUTPUT (2030)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #else
+    #define NEUTRAL_DEMAND_OUTPUT (2010)
+    #define DAC_SWING (344)                 // Switch is 1.0 Volts.
+    #define MAX_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT + DAC_SWING)
+    #define MIN_DAC_OUTPUT (NEUTRAL_DEMAND_OUTPUT - DAC_SWING)
+    #endif
 #else
 #assert
 #endif

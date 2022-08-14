@@ -36,7 +36,39 @@
                     <type>2</type>
                 </confElem>
                 <confElem>
-                    <name>Release_QLogic</name>
+                    <name>Release_QLogic_1984</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_1990</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_1992</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_1995</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_2000</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_2010</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_2018</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_2024</name>
+                    <type>2</type>
+                </confElem>
+                <confElem>
+                    <name>Release_QLogic_2030</name>
                     <type>2</type>
                 </confElem>
             </confList>
